@@ -1,0 +1,16 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-cert
+  namespace: cert-manager
+spec:
+  secretName: wildcard-tls
+  issuerRef:
+    name: cloudflare-issuer
+    kind: ClusterIssuer
+  commonName: "*.example.com"
+  dnsNames:
+  - "*.example.com"
+  - "*.apps.example.com"
+  - "example.com"
