@@ -1,0 +1,7 @@
+#kubectl label namespace <namespace-name> istio-injection=enabled
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-istio-namespace
+  labels:
+    istio-injection: enabled
