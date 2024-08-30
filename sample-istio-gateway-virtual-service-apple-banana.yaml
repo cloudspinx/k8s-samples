@@ -1,0 +1,52 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: fruit-gateway
+  namespace: default
+spec:
+  selector:
+    istio: ingressgateway  # Use Istio's built-in ingress gateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "fruit.example.com"
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: fruit-tls-secret  # Kubernetes secret that stores TLS certificate
+    hosts:
+    - "fruit.example.com"
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: fruit-virtualservice
+  namespace: default
+spec:
+  hosts:
+  - "fruit.example.com"
+  gateways:
+  - fruit-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/apple"
+    route:
+    - destination:
+        host: apple-service
+        port:
+          number: 80
+  - match:
+    - uri:
+        prefix: "/banana"
+    route:
+    - destination:
+        host: banana-service
+        port:
+          number: 80
