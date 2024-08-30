@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-base
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: base
+    targetRevision: 1.23.0
+    helm:
+      releaseName: istio-base
+      valuesObject:
+        defaults:
+          global:
+             istioNamespace: istio-system
+          base:
+            defaultRevision: "default"
+  destination:
+    name: in-cluster
+    namespace: istio-system
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
