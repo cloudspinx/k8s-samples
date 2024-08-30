@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: banana-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: banana
+  template:
+    metadata:
+      labels:
+        app: banana
+    spec:
+      containers:
+      - name: banana
+        image: hashicorp/http-echo
+        args:
+        - "-text=Hello, this is the Banana service!"
+        ports:
+        - containerPort: 5678
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apple-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apple
+  template:
+    metadata:
+      labels:
+        app: apple
+    spec:
+      containers:
+      - name: apple
+        image: hashicorp/http-echo
+        args:
+        - "-text=Hello, this is the Apple service!"
+        ports:
+        - containerPort: 5678
