@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudflare-api-token
+  namespace: cert-manager
+type: Opaque
+data:
+  api-token: <token> # echo -n <Cloudflare API token> | base64
+#stringData:
+#  api-token: <Cloudflare API token>
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: cloudflare-issuer
+  namespace: cert-manager
+spec:
+  acme:
+    email: <your-email-address>
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-cloudflare
+    solvers:
+    - dns01:
+        cloudflare:
+          email: <your-email-address>
+          apiTokenSecretRef:
+            name: cloudflare-api-token
+            key: api-token
