@@ -1,0 +1,52 @@
+# server both http and https
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: fruit-ingressroute
+  namespace: default
+spec:
+  entryPoints:
+    - web  # For HTTP
+    - websecure  # For HTTPS
+  routes:
+  - match: Host(`fruit.example.com`) && PathPrefix(`/apple`)
+    kind: Rule
+    services:
+    - name: apple-service
+      port: 80
+  - match: Host(`fruit.example.com`) && PathPrefix(`/banana`)
+    kind: Rule
+    services:
+    - name: banana-service
+      port: 80
+  tls:
+    secretName: fruit-tls-secret  # Specify the secret that contains the TLS certificate
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-to-https
+  namespace: default
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+
+# ingressroute-redirect.yaml
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: http-to-https-redirect
+  namespace: default
+spec:
+  entryPoints:
+    - web  # Only listen on HTTP for this redirect
+  routes:
+  - match: Host(`fruit.example.com`)
+    kind: Rule
+    middlewares:
+    - name: redirect-to-https
+    services:
+    - name: apple-service
+      port: 80
