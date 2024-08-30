@@ -33,7 +33,7 @@ spec:
     scheme: https
     permanent: true
 
-# ingressroute-redirect.yaml
+# Redirect http to https
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
